@@ -2,7 +2,7 @@ const express = require('express');
 const mainrouter = require('./routes/mainRoute');
 const mongoose = require("mongoose");
 const dbCnnection = require('./config/db')
-const PORT = 10000;
+const PORTS =  process.env.PORT|| 10000;
 
 const app = express();
 
@@ -25,6 +25,6 @@ console.log("Server Started")
 
 
 
-app.listen(PORT,()=>{
-    console.log(`Server running on port`+PORT);
+app.listen(PORTS,()=>{
+    console.log(`Server running on port`+PORTS);
 })
