@@ -1,5 +1,5 @@
 const authModel = require('../model/authModel')
-const bcrypt = require("bcrypt")
+// const bcrypt = require("bcrypt")
 let users = [
     { userName: 'Admed', id: 1,email:'admed@gmail.com',pass:"787"},
     { userName: 'Umair', id: 2,email:'umair@gmail.com',pass:"987"},
@@ -20,7 +20,7 @@ const login = async(req,res)=>{
         
         if(checkUser){
         console.log(checkUser,'checkUser')
-            const passTest = await bcrypt.compare(password,checkUser.password)
+            // const passTest = await bcrypt.compare(password,checkUser.password)
             if(passTest){
                 return res.status(200).send({
                     message: "login successfull",
@@ -53,8 +53,8 @@ const {email,userName,password} = req.body;
             res.status(200).send({success:false,message:"Email Duplicate,try another one!"})
         }else{
             // users.push({email,userName,password,id:users.length+1})
-            const hassPass = await bcrypt.hash(password,12);
-            const result = new authModel({email,userName,password:hassPass}) 
+            // const hassPass = await bcrypt.hash(password,12);
+            const result = new authModel({email,userName,password}) 
             result.save()
             .then((response)=>{
                 res.status(200).send({data:response,success:true,message:"Signup Successfull"})
