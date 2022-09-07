@@ -1,5 +1,5 @@
 const authModel = require('../model/authModel')
-
+const bcrypt = require("bcrypt")
 let users = [
     { userName: 'Admed', id: 1,email:'admed@gmail.com',pass:"787"},
     { userName: 'Umair', id: 2,email:'umair@gmail.com',pass:"987"},
@@ -12,14 +12,39 @@ const getusersdata = (req,res)=>{
     }
 
 
-const login = (req,res)=>{
-        res.status(200).send({success:true,data:users,message:"Fetched users data successfully"})
+const login = async(req,res)=>{
+    try {
+        console.log(req.body,'req.body')
+        let {email,password} = await req.body;
+        const checkUser = await authModel.findOne({"email":email})
+        
+        if(checkUser){
+        console.log(checkUser,'checkUser')
+            const passTest = await bcrypt.compare(password,checkUser.password)
+            if(passTest){
+                return res.status(200).send({
+                    message: "login successfull",
+                    success: true,
+                data:{userId:checkUser._id,email:checkUser. email}})
+            }else{
+                return res.status(200).send({success:false,message:"Password Incorrect!"})
+            }
+        
+        }else{
+            return res.status(200).send({ success: false, message:"Email Not Found"}) 
+        }
+        
+            }
+            catch(e){
+                console.log(e,'eeee')
+                return res.status(401).send({ success: false, message: e.message });
+            }
         }
 
 
 const signup = async(req,res)=>{
     try{
-const {email,userName,pass} = req.body;
+const {email,userName,password} = req.body;
 
         // const checkEmail = users.filter((val,ind)=>{return val.email == email } )
         const checkEmail = await authModel.findOne({"email":email})
@@ -27,8 +52,9 @@ const {email,userName,pass} = req.body;
         if(checkEmail){
             res.status(200).send({success:false,message:"Email Duplicate,try another one!"})
         }else{
-            // users.push({email,userName,pass,id:users.length+1})
-            const result = new authModel({email,userName,pass}) 
+            // users.push({email,userName,password,id:users.length+1})
+            const hassPass = await bcrypt.hash(password,12);
+            const result = new authModel({email,userName,password:hassPass}) 
             result.save()
             .then((response)=>{
                 res.status(200).send({data:response,success:true,message:"Signup Successfull"})
