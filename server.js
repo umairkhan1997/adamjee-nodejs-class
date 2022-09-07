@@ -2,7 +2,7 @@ const express = require('express');
 const mainrouter = require('./routes/mainRoute');
 const mongoose = require("mongoose");
 const dbCnnection = require('./config/db')
-const ports =  process.env.PORT|| 10000;
+const PORT =  process.env.PORT || 10000;
 
 const app = express();
 
@@ -26,6 +26,6 @@ res.send("Express Docker Heroku Container Registry");
 
 
 
-app.listen(ports,()=>{
-    console.log(`Server running on port`+ports);
+app.listen(PORT,()=>{
+    console.log(`Server running on port`+PORT);
 })
