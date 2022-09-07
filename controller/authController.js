@@ -1,4 +1,4 @@
-
+const authModel = require('../model/authModel')
 
 let users = [
     { userName: 'Admed', id: 1,email:'admed@gmail.com',pass:"787"},
@@ -17,17 +17,25 @@ const login = (req,res)=>{
         }
 
 
-const signup = (req,res)=>{
+const signup = async(req,res)=>{
     try{
 const {email,userName,pass} = req.body;
 
-        const checkEmail = users.filter((val,ind)=>{return val.email == email } )
+        // const checkEmail = users.filter((val,ind)=>{return val.email == email } )
+        const checkEmail = await authModel.findOne({"email":email})
         console.log(checkEmail,"checkEmail");
-        if(checkEmail.length > 0){
+        if(checkEmail){
             res.status(200).send({success:false,message:"Email Duplicate,try another one!"})
         }else{
-            users.push({email,userName,pass,id:users.length+1})
-            res.status(200).send({success:true,message:"Signup Successfull"})
+            // users.push({email,userName,pass,id:users.length+1})
+            const result = new authModel({email,userName,pass}) 
+            result.save()
+            .then((response)=>{
+                res.status(200).send({data:response,success:true,message:"Signup Successfull"})
+            })
+            .catch((err1)=>{
+                res.status(400).send({success:false,message:err1.message})
+            })
         }
 
     }
